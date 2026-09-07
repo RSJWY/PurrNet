@@ -325,7 +325,12 @@ namespace PurrNet.Modules
                 });
             }
 
+#if ADDRESSABLES_PURRNET_SUPPORT
             RebuildAddressableHistoryFromLoadedScenes();
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+            RebuildYooAssetHistoryFromLoadedScenes();
+#endif
             _history.Flush();
         }
 
@@ -578,6 +583,10 @@ namespace PurrNet.Modules
             if (IsScenePendingAddressable(sceneId))
                 return true;
 #endif
+#if YOOASSET_PURRNET_SUPPORT
+            if (IsScenePendingYooAsset(sceneId))
+                return true;
+#endif
             return false;
         }
 
@@ -667,8 +676,15 @@ namespace PurrNet.Modules
                             break;
                         }
 
-#if ADDRESSABLES_PURRNET_SUPPORT
+#if ADDRESSABLES_PURRNET_SUPPORT && YOOASSET_PURRNET_SUPPORT
+                        if (IsYooAssetSceneKey(action.loadAddressableSceneAction.guid.value))
+                            ProcessLoadYooAssetAction(action.loadAddressableSceneAction);
+                        else
+                            ProcessLoadAddressableAction(action.loadAddressableSceneAction);
+#elif ADDRESSABLES_PURRNET_SUPPORT
                         ProcessLoadAddressableAction(action.loadAddressableSceneAction);
+#elif YOOASSET_PURRNET_SUPPORT
+                        ProcessLoadYooAssetAction(action.loadAddressableSceneAction);
 #else
                         PurrLogger.LogError("Received LoadAddressable scene action but Addressables support is not available");
 #endif
@@ -697,6 +713,13 @@ namespace PurrNet.Modules
                         if (IsScenePending(idx)) break;
 #if ADDRESSABLES_PURRNET_SUPPORT
                         if (TryUnloadAddressableScene(idx, action.unloadSceneAction.options))
+                        {
+                            _actionsQueue.Dequeue();
+                            break;
+                        }
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+                        if (TryUnloadYooAssetScene(idx, action.unloadSceneAction.options))
                         {
                             _actionsQueue.Dequeue();
                             break;
@@ -742,6 +765,9 @@ namespace PurrNet.Modules
 #if ADDRESSABLES_PURRNET_SUPPORT
             var targetAddressableScenes = new Dictionary<SceneID, string>();
 #endif
+#if YOOASSET_PURRNET_SUPPORT
+            var targetYooAssetScenes = new Dictionary<SceneID, string>();
+#endif
             var missingActions = new List<SceneAction>();
             var replayLoadEvents = new List<SceneID>();
 
@@ -778,7 +804,29 @@ namespace PurrNet.Modules
                         var loadAction = action.loadAddressableSceneAction;
                         targetScenes.Add(loadAction.sceneID);
                         _sceneActionScenes.Add(loadAction.sceneID);
-#if ADDRESSABLES_PURRNET_SUPPORT
+#if ADDRESSABLES_PURRNET_SUPPORT && YOOASSET_PURRNET_SUPPORT
+                        var sharedKey = loadAction.guid.value;
+                        if (IsYooAssetSceneKey(sharedKey))
+                        {
+                            targetYooAssetScenes[loadAction.sceneID] = sharedKey;
+
+                            if (TryReconcileLoadedYooAssetTransferScene(loadAction, replayLoadEvents))
+                                break;
+
+                            if (!IsYooAssetScenePending(loadAction.sceneID, sharedKey))
+                                missingActions.Add(action);
+                        }
+                        else
+                        {
+                            targetAddressableScenes[loadAction.sceneID] = sharedKey;
+
+                            if (TryReconcileLoadedAddressableTransferScene(loadAction, replayLoadEvents))
+                                break;
+
+                            if (!IsAddressableScenePending(loadAction.sceneID, sharedKey))
+                                missingActions.Add(action);
+                        }
+#elif ADDRESSABLES_PURRNET_SUPPORT
                         var guid = loadAction.guid.value;
                         targetAddressableScenes[loadAction.sceneID] = guid;
 
@@ -788,7 +836,18 @@ namespace PurrNet.Modules
                         if (!IsAddressableScenePending(loadAction.sceneID, guid))
                             missingActions.Add(action);
 #else
+#if YOOASSET_PURRNET_SUPPORT
+                        var yooAssetKey = loadAction.guid.value;
+                        targetYooAssetScenes[loadAction.sceneID] = yooAssetKey;
+
+                        if (TryReconcileLoadedYooAssetTransferScene(loadAction, replayLoadEvents))
+                            break;
+
+                        if (!IsYooAssetScenePending(loadAction.sceneID, yooAssetKey))
+                            missingActions.Add(action);
+#else
                         missingActions.Add(action);
+#endif
 #endif
                         break;
                     }
@@ -802,6 +861,9 @@ namespace PurrNet.Modules
 
 #if ADDRESSABLES_PURRNET_SUPPORT
             RemoveStaleAddressableTransferScenes(targetAddressableScenes);
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+            RemoveStaleYooAssetTransferScenes(targetYooAssetScenes);
 #endif
             RemoveStaleTransferScenes(targetScenes, targetBuildScenes);
 
@@ -1263,6 +1325,10 @@ namespace PurrNet.Modules
             if (TryUnloadAddressableScene(sceneIndex, options))
                 return null;
 #endif
+#if YOOASSET_PURRNET_SUPPORT
+            if (TryUnloadYooAssetScene(sceneIndex, options))
+                return null;
+#endif
             var op = SceneManager.UnloadSceneAsync(scene, options);
             RemoveScene(scene);
 
@@ -1347,10 +1413,17 @@ namespace PurrNet.Modules
 
         partial void ProcessCompletedAddressableLoads();
         partial void RebuildAddressableHistoryFromLoadedScenes();
+        partial void ProcessCompletedYooAssetLoads();
+        partial void RebuildYooAssetHistoryFromLoadedScenes();
 
         public void FixedUpdate()
         {
+#if ADDRESSABLES_PURRNET_SUPPORT
             ProcessCompletedAddressableLoads();
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+            ProcessCompletedYooAssetLoads();
+#endif
             HandleNextSceneAction();
 
             if (_history.hasUnflushedActions)
@@ -1559,6 +1632,11 @@ namespace PurrNet.Modules
 
         private bool UnloadAllScenesCleanup(bool keepNetworkManager)
         {
+#if YOOASSET_PURRNET_SUPPORT
+            if (!UnloadAllYooAssetScenesCleanup(keepNetworkManager))
+                return false;
+#endif
+
             // unload all scenes that aren't the network manager scene
             if (_scenes.Count > 0)
             {

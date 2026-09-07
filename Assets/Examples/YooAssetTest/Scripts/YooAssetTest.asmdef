@@ -1,0 +1,23 @@
+{
+    "name": "YooAssetTest",
+    "rootNamespace": "YooAssetTest",
+    "references": [
+        "GUID:6e20f757a1bae164fa42750dd2b27dcb",
+        "GUID:e34a5702dd353724aa315fb8011f08c3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.tuyoogame.yooasset",
+            "expression": "",
+            "define": "YOOASSET_PURRNET_SUPPORT"
+        }
+    ],
+    "noEngineReferences": false
+}
