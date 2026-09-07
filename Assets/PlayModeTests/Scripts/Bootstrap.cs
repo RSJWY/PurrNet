@@ -27,6 +27,9 @@ public class Bootstrap : Scenario
     [SerializeField] private int _editorExpectedConnections = 2;
     [Tooltip("Run benchmark mode in the editor (Host + Multiplayer Playmode clients) without the -bench arg.")]
     [SerializeField] private bool _editorBenchmarkMode;
+    [Tooltip("Same as the -scenario argument: when set (and no -scenario argument is present), " +
+             "only this scenario (by class name) runs. Useful for single-scenario editor runs.")]
+    [SerializeField] private string _editorScenarioFilter;
 
     [Header("Benchmark")]
     [Tooltip("Object holding the BenchmarkScenario components. Reorder or disable its children to change which benchmarks run.")]
@@ -223,7 +226,8 @@ public class Bootstrap : Scenario
         }
 
         CommandLineUtils.TryGetArgument("-results", out _resultsPath);
-        CommandLineUtils.TryGetArgument("-scenario", out _scenarioFilter);
+        if (!CommandLineUtils.TryGetArgument("-scenario", out _scenarioFilter))
+            _scenarioFilter = _editorScenarioFilter;
 
         LoadBenchmarkArgs();
     }
