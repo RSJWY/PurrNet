@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using PurrNet.Logging;
 using UnityEngine.SceneManagement;
 using YooAsset;
+using YooAssetSceneHandle = YooAsset.SceneHandle;
 
 namespace PurrNet.Modules
 {
@@ -15,7 +16,7 @@ namespace PurrNet.Modules
         {
             public string packageName;
             public string location;
-            public SceneHandle handle;
+            public YooAssetSceneHandle handle;
             public SceneID idToAssign;
             public PurrSceneSettings settings;
             public bool ownsHandle;
@@ -25,7 +26,7 @@ namespace PurrNet.Modules
         {
             public string packageName;
             public string location;
-            public SceneHandle handle;
+            public YooAssetSceneHandle handle;
             public bool ownsHandle;
         }
 
@@ -89,7 +90,7 @@ namespace PurrNet.Modules
                    key.StartsWith(YooAssetSceneKeyPrefix, StringComparison.Ordinal);
         }
 
-        private void RegisterYooAssetCompletionCallback(SceneHandle handle)
+        private void RegisterYooAssetCompletionCallback(YooAssetSceneHandle handle)
         {
             handle.Completed += _ => ProcessCompletedYooAssetLoads();
         }
@@ -140,7 +141,7 @@ namespace PurrNet.Modules
             if (action.parameters.mode == LoadSceneMode.Single)
                 PrepareForSingleYooAssetSceneLoad();
 
-            SceneHandle handle;
+            YooAssetSceneHandle handle;
             try
             {
                 var package = YooAssets.GetPackage(packageName);
@@ -165,7 +166,7 @@ namespace PurrNet.Modules
         private void AddPendingYooAssetOperation(
             string packageName,
             string location,
-            SceneHandle handle,
+            YooAssetSceneHandle handle,
             SceneID sceneId,
             PurrSceneSettings settings,
             bool ownsHandle)
@@ -220,7 +221,7 @@ namespace PurrNet.Modules
         /// Loads a scene through the specified YooAsset package. Only the server can load scenes.
         /// The package must already be created, initialized, and have a valid manifest on every peer.
         /// </summary>
-        public SceneHandle LoadYooAssetSceneAsync(
+        public YooAssetSceneHandle LoadYooAssetSceneAsync(
             string packageName,
             string location,
             PurrSceneSettings settings)
@@ -255,7 +256,7 @@ namespace PurrNet.Modules
                 parameters = settings
             });
 
-            SceneHandle handle;
+            YooAssetSceneHandle handle;
             try
             {
                 var package = YooAssets.GetPackage(packageName);
@@ -289,7 +290,7 @@ namespace PurrNet.Modules
         /// <summary>
         /// Loads a scene through the specified YooAsset package using the location-first argument order.
         /// </summary>
-        public SceneHandle LoadYooAssetSceneAsync(
+        public YooAssetSceneHandle LoadYooAssetSceneAsync(
             string location,
             PurrSceneSettings settings,
             string packageName)

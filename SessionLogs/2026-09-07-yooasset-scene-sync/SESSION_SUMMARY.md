@@ -29,6 +29,8 @@ dotnet build PurrNet.Runtime.csproj --no-restore
 
 并执行 `git diff --check`，未发现空白错误。
 
+后续修复：为兼容 Unity 新增的 `UnityEngine.SceneManagement.SceneHandle`，YooAsset 场景句柄统一使用 `YooAssetSceneHandle` 显式别名；使用本机 YooAsset 3.0.5 DLL 进行条件编译验证，0 警告、0 错误。
+
 ## 使用前提
 
 - 服务端和所有客户端必须提前创建并初始化同名 YooAsset Package。
