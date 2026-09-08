@@ -2,6 +2,21 @@
 
 <img width="256" height="266" alt="PurrNet_Logo_-_No_BG(2)" src="https://github.com/user-attachments/assets/8aff6704-165e-435e-a5be-8c2b07ca6ad3" /> 
 
+## YooAsset Integration (this fork)
+
+This fork adds first-class [YooAsset](https://github.com/tuyoogame/yooasset) support on top of upstream PurrNet (branch `yooasset`):
+
+- **YooAsset scene sync** — load/unload YooAsset-delivered scenes through `NetworkManager.sceneModule` (`LoadYooAssetSceneAsync`, `UnloadYooAssetSceneByLocation`). Scene state replicates to all clients, including late joiners, with matching `SceneID`s on every peer.
+- **`YooAssetNetworkPrefabs` provider** — a `ScriptableObject` prefab registry that maps `(packageName, location)` pairs to deterministic, cross-peer prefab IDs. Supports preloading at startup, linked registries (recursively merged, deduped by key), and runtime-registered prefabs.
+- **Editor auto-generation** — entries can be generated straight from a YooAsset package's collector settings, with optional group-name and tag filters plus custom `IYooAssetNetworkPrefabRule` implementations to decide which collected assets become entries.
+- **One-call spawning** — `NetworkManager.SpawnYooAssetAsync(package, location, ...)` loads the prefab through YooAsset and network-spawns it; `DespawnYooAsset` releases it.
+- **IL-intercepted auto-spawn** — `AssetHandle.InstantiateSync/InstantiateAsync` and `Object.Destroy` calls on registered YooAsset prefabs are rewritten to PurrNet proxies, so instances are network-spawned/despawned automatically with no explicit `Spawn` call.
+- **Examples & tests** — manual test scripts under `Assets/Examples/YooAssetTest` (see its README) and a play-mode scene-transfer scenario under `Assets/PlayModeTests`.
+
+The integration only compiles when the YooAsset package is installed (gated behind the `YOOASSET_PURRNET_SUPPORT` define, auto-set via asmdef version defines).
+
+---
+
 PurrNet is our attempt at the purrfect networking solution... It's a 100% free Unity Networking solution with no pro or premium version, and no features locked behind a pay-gate.
 You can use it to release, and we ask nothing in return! Read the Unique to PurrNet section to see what we offer above other solutions!
 
