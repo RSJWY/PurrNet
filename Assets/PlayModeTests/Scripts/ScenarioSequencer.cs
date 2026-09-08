@@ -18,6 +18,18 @@ public static class ScenarioSequencer
 
     public static bool SequenceComplete => _sequenceComplete;
 
+    // Static state survives play sessions when domain reload is disabled; without
+    // this reset the next run's clients see SequenceComplete/latest-start from the
+    // previous run and skip every scenario.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetState()
+    {
+        _acksByIndex.Clear();
+        _endOfRunAcks.Clear();
+        _latestStartedIndex = -1;
+        _sequenceComplete = false;
+    }
+
     public static void IssueStart(int index)
     {
         BroadcastStart(index);

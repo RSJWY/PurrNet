@@ -15,10 +15,15 @@ MonoBehaviour:
   autoGenerate: 1
   folder: {fileID: 102900000, guid: 536d08d53fdf2c7429cbc70b8f9ebe21, type: 3}
   searchAllIfNoFolder: 1
-  linkedNetworkAssets: []
+  linkedNetworkAssets:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   _enabledTypeNames: []
   assets: []
   _availableTypeNames: []
   _assetGuids: []
   _bakedIds: 
   _bakedAssets: []
+  _bakedPersistentIds: []

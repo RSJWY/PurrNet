@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="18" result="Passed" total="18" passed="17" failed="0" inconclusive="0" skipped="1" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.144234">
+  <test-suite type="TestSuite" id="1000" name="PurrNet" fullname="PurrNet" runstate="Runnable" testcasecount="18" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.144234" total="18" passed="17" failed="0" inconclusive="0" skipped="1" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1007" name="PurrNet.Codegen.Editor.Tests.dll" fullname="E:/Unity/PurrNet/Library/ScriptAssemblies/PurrNet.Codegen.Editor.Tests.dll" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.030125" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1008" name="PurrNet" fullname="PurrNet" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.029925" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1009" name="Codegen" fullname="PurrNet.Codegen" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.029853" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1010" name="Tests" fullname="PurrNet.Codegen.Tests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.029771" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1001" name="SerializerMethodDiscoveryTests" fullname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests" classname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.029074" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1006" name="DeltaReadersMustReturnVoid" fullname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests.DeltaReadersMustReturnVoid" methodname="DeltaReadersMustReturnVoid" classname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests" runstate="Runnable" seed="1459135099" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.018319" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1004" name="DeltaWriterMustReturnBoolean" fullname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests.DeltaWriterMustReturnBoolean" methodname="DeltaWriterMustReturnBoolean" classname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests" runstate="Runnable" seed="790415836" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000468" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1002" name="NonVoidBitPackerMethodIsNotDiscoveredAsWriter" fullname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests.NonVoidBitPackerMethodIsNotDiscoveredAsWriter" methodname="NonVoidBitPackerMethodIsNotDiscoveredAsWriter" classname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests" runstate="Runnable" seed="890054238" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000352" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1005" name="ReadersMustReturnVoid" fullname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests.ReadersMustReturnVoid" methodname="ReadersMustReturnVoid" classname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests" runstate="Runnable" seed="220467366" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000329" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1003" name="VoidBitPackerMethodIsDiscoveredAsWriter" fullname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests.VoidBitPackerMethodIsDiscoveredAsWriter" methodname="VoidBitPackerMethodIsDiscoveredAsWriter" classname="PurrNet.Codegen.Tests.SerializerMethodDiscoveryTests" runstate="Runnable" seed="1283480401" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000186" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1026" name="PurrNet.PackageManager.Editor.Tests.dll" fullname="E:/Unity/PurrNet/Library/ScriptAssemblies/PurrNet.PackageManager.Editor.Tests.dll" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.107991" total="12" passed="11" failed="0" inconclusive="0" skipped="1" asserts="0">
+      <properties>
+        <property name="_PID" value="55628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1027" name="PurrNet" fullname="PurrNet" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.107522" total="12" passed="11" failed="0" inconclusive="0" skipped="1" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1028" name="Editor" fullname="PurrNet.Editor" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.107440" total="12" passed="11" failed="0" inconclusive="0" skipped="1" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1029" name="Tests" fullname="PurrNet.Editor.Tests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.107349" total="12" passed="11" failed="0" inconclusive="0" skipped="1" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1024" name="PurrPackageManagerIntegrationTests" fullname="PurrNet.Editor.Tests.PurrPackageManagerIntegrationTests" classname="PurrNet.Editor.Tests.PurrPackageManagerIntegrationTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.001070" total="1" passed="0" failed="0" inconclusive="0" skipped="1" asserts="0">
+              <properties />
+              <test-case id="1025" name="LocalPackage_CanInstallUpdateAndRemoveThroughUnityPackageManager" fullname="PurrNet.Editor.Tests.PurrPackageManagerIntegrationTests.LocalPackage_CanInstallUpdateAndRemoveThroughUnityPackageManager" methodname="LocalPackage_CanInstallUpdateAndRemoveThroughUnityPackageManager" classname="PurrNet.Editor.Tests.PurrPackageManagerIntegrationTests" runstate="Explicit" seed="1097621190" result="Skipped" label="Explicit" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000159" asserts="0">
+                <properties>
+                  <property name="_SKIPREASON" value="Mutates the project manifest temporarily and invokes the real Unity Package Manager." />
+                  <property name="Timeout" value="180000" />
+                </properties>
+                <reason>
+                  <message><![CDATA[Mutates the project manifest temporarily and invokes the real Unity Package Manager.]]></message>
+                </reason>
+              </test-case>
+            </test-suite>
+            <test-suite type="TestFixture" id="1011" name="PurrPackageManagerIOTests" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" testcasecount="11" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.106017" total="11" passed="11" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1012" name="GetContainedPath_AllowsNestedChild" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.GetContainedPath_AllowsNestedChild" methodname="GetContainedPath_AllowsNestedChild" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="263791078" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.006867" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1016" name="GetContainedPath_RejectsRootedPath" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.GetContainedPath_RejectsRootedPath" methodname="GetContainedPath_RejectsRootedPath" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="1124055824" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.003201" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1015" name="GetContainedPath_RejectsTraversal" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.GetContainedPath_RejectsTraversal" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.003625" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1013" name="GetContainedPath_RejectsTraversal(&quot;../outside.txt&quot;)" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.GetContainedPath_RejectsTraversal(&quot;../outside.txt&quot;)" methodname="GetContainedPath_RejectsTraversal" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="1737412318" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.001672" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1014" name="GetContainedPath_RejectsTraversal(&quot;nested/../../outside.txt&quot;)" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.GetContainedPath_RejectsTraversal(&quot;nested/../../outside.txt&quot;)" methodname="GetContainedPath_RejectsTraversal" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="1745454757" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.001501" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1017" name="GetSafeFileName_RemovesDirectories" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.GetSafeFileName_RemovesDirectories" methodname="GetSafeFileName_RemovesDirectories" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="1447612907" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.001712" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1018" name="PackageInfo_UserEditableDefaultsToFalse" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.PackageInfo_UserEditableDefaultsToFalse" methodname="PackageInfo_UserEditableDefaultsToFalse" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="667551023" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.003132" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1019" name="PackageInfo_UserEditableDeserializesFromCatalog" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.PackageInfo_UserEditableDeserializesFromCatalog" methodname="PackageInfo_UserEditableDeserializesFromCatalog" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="435378672" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.001879" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1023" name="SyncDirectoryTransactional_OpenHandleLeavesDestinationUntouched" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.SyncDirectoryTransactional_OpenHandleLeavesDestinationUntouched" methodname="SyncDirectoryTransactional_OpenHandleLeavesDestinationUntouched" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="1040543627" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.034885" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1022" name="SyncDirectoryTransactional_ReadOnlyFileLeavesDestinationUntouched" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.SyncDirectoryTransactional_ReadOnlyFileLeavesDestinationUntouched" methodname="SyncDirectoryTransactional_ReadOnlyFileLeavesDestinationUntouched" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="1482428534" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.015941" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1021" name="SyncDirectoryTransactional_UpdatesAndRemovesFiles" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.SyncDirectoryTransactional_UpdatesAndRemovesFiles" methodname="SyncDirectoryTransactional_UpdatesAndRemovesFiles" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="1860725818" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.028366" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1020" name="WriteAllTextAtomic_ReadOnlyDestinationPreservesOriginal" fullname="PurrNet.Editor.Tests.PurrPackageManagerIOTests.WriteAllTextAtomic_ReadOnlyDestinationPreservesOriginal" methodname="WriteAllTextAtomic_ReadOnlyDestinationPreservesOriginal" classname="PurrNet.Editor.Tests.PurrPackageManagerIOTests" runstate="Runnable" seed="142404004" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.005051" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+    <test-suite type="Assembly" id="1032" name="Unity.Addressables.DocExampleCode.Editor.Tests.dll" fullname="E:/Unity/PurrNet/Library/ScriptAssemblies/Unity.Addressables.DocExampleCode.Editor.Tests.dll" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.001128" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="55628" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1033" name="AddressableAssets" fullname="AddressableAssets" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000795" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1034" name="DocExampleCode" fullname="AddressableAssets.DocExampleCode" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000672" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestFixture" id="1030" name="TestStub" fullname="AddressableAssets.DocExampleCode.TestStub" classname="AddressableAssets.DocExampleCode.TestStub" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000539" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-case id="1031" name="RequiredTest" fullname="AddressableAssets.DocExampleCode.TestStub.RequiredTest" methodname="RequiredTest" classname="AddressableAssets.DocExampleCode.TestStub" runstate="Runnable" seed="428402786" result="Passed" start-time="2026-09-08 04:11:49Z" end-time="2026-09-08 04:11:49Z" duration="0.000092" asserts="0">
+              <properties>
+                <property name="retryIteration" value="0" />
+                <property name="repeatIteration" value="0" />
+              </properties>
+              <output><![CDATA[Saving results to: C:/Users/linmi/AppData/LocalLow/DefaultCompany/PurrNet\TestResults.xml
+]]></output>
+            </test-case>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>
