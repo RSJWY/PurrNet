@@ -13,13 +13,16 @@ namespace PurrNet.Codegen
         const string AddressablesClassName = "UnityEngine.AddressableAssets.Addressables";
         const string AssetReferenceClassName = "UnityEngine.AddressableAssets.AssetReference";
         const string AddressablesProxyFullName = "PurrNet.AddressablesProxy";
+        const string YooAssetHandleClassName = "YooAsset.AssetHandle";
+        const string YooAssetProxyFullName = "PurrNet.YooAssetProxy";
 
         public static void Process(TypeDefinition type, [UsedImplicitly] List<DiagnosticMessage> messages)
         {
             try
             {
                 bool isProxyItself = type.FullName == typeof(UnityProxy).FullName
-                    || type.FullName == AddressablesProxyFullName;
+                    || type.FullName == AddressablesProxyFullName
+                    || type.FullName == YooAssetProxyFullName;
 
                 if (isProxyItself)
                     return;
@@ -30,6 +33,8 @@ namespace PurrNet.Codegen
 
                 TypeDefinition addressablesProxyType = null;
                 bool addressablesProxyResolved = false;
+                TypeDefinition yooAssetProxyType = null;
+                bool yooAssetProxyResolved = false;
 
                 foreach (var method in type.Methods)
                 {
@@ -89,6 +94,40 @@ namespace PurrNet.Codegen
 
                             processor.Replace(instruction, processor.Create(instruction.OpCode, targerRef));
                             continue;
+                        }
+
+                        if (methodReference.Name == "InstantiateSync" ||
+                            methodReference.Name == "InstantiateAsync")
+                        {
+                            if (IsOrDerivedFrom(methodReference.DeclaringType, YooAssetHandleClassName))
+                            {
+                                // Lazy-resolve the YooAssetProxy type (once per type being processed)
+                                if (!yooAssetProxyResolved)
+                                {
+                                    yooAssetProxyResolved = true;
+                                    yooAssetProxyType = ResolveTypeByName(module, YooAssetProxyFullName);
+                                }
+
+                                // Macro not defined -> proxy type missing -> silently skip
+                                if (yooAssetProxyType == null)
+                                    continue;
+
+                                var yooResolved = methodReference.Resolve();
+
+                                if (yooResolved == null)
+                                    continue;
+
+                                var yooTargetMethod = GetMatchingDefinition(
+                                    yooResolved, yooAssetProxyType, true);
+
+                                if (yooTargetMethod == null)
+                                    continue;
+
+                                var yooTargetRef = module.ImportReference(yooTargetMethod);
+
+                                processor.Replace(instruction, processor.Create(OpCodes.Call, yooTargetRef));
+                                continue;
+                            }
                         }
 
                         if (methodReference.Name != "InstantiateAsync" &&

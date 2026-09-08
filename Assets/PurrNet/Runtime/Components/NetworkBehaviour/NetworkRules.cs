@@ -186,6 +186,18 @@ namespace PurrNet
     }
 #endif
 
+#if YOOASSET_PURRNET_SUPPORT
+    [Serializable]
+    public struct YooAssetRules
+    {
+        [Tooltip("Sync YooAsset load state (loaded/unloaded) with the server. Enables server to only add observers when clients have the prefab ready.")]
+        public bool syncLoadState;
+
+        [Tooltip("Only add as observer when client has reported the YooAsset prefab as loaded. Avoids RPCs arriving before the identity exists.")]
+        public bool waitForLoadBeforeObserver;
+    }
+#endif
+
     [CreateAssetMenu(fileName = "NetworkRules", menuName = "PurrNet/Network Rules", order = -201)]
     public class NetworkRules : ScriptableObject, ISerializationCallbackReceiver
     {
@@ -275,6 +287,17 @@ namespace PurrNet
         public bool AddressablesSyncLoadState => _addressableRules.syncLoadState;
         public bool AddressablesWaitForLoadBeforeObserver => _addressableRules.waitForLoadBeforeObserver;
         public bool AddressablesReleaseWhenLastDespawned => _addressableRules.releaseWhenLastDespawned;
+#endif
+
+#if YOOASSET_PURRNET_SUPPORT
+        [SerializeField]
+        private YooAssetRules _yooAssetRules = new YooAssetRules
+        {
+            syncLoadState = true,
+            waitForLoadBeforeObserver = true
+        };
+        public bool YooAssetSyncLoadState => _yooAssetRules.syncLoadState;
+        public bool YooAssetWaitForLoadBeforeObserver => _yooAssetRules.waitForLoadBeforeObserver;
 #endif
 
         public void OnBeforeSerialize() { }

@@ -38,3 +38,16 @@ MonoBehaviour:
         FilterRuleName: CollectScene
         AssetTags: 
         UserData: 
+    - GroupName: YooAssetTest
+      GroupDesc: YooAsset network prefab example
+      AssetTags: 
+      ActiveRuleName: EnableGroup
+      Collectors:
+      - CollectPath: Assets/Examples/YooAssetTest/Prefabs
+        CollectorGUID: 3042ab3627164244b13729157a3f9bcf
+        CollectorType: 0
+        AddressRuleName: AddressByFileName
+        PackRuleName: PackSeparately
+        FilterRuleName: CollectPrefab
+        AssetTags: 
+        UserData: 

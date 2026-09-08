@@ -63,6 +63,9 @@ namespace PurrNet
 #if ADDRESSABLES_PURRNET_SUPPORT
             AddAddressableNetworkPrefabWatchers();
 #endif
+#if YOOASSET_PURRNET_SUPPORT
+            AddYooAssetNetworkPrefabWatchers();
+#endif
             _cacheDirty = false;
         }
 
@@ -123,6 +126,25 @@ namespace PurrNet
         }
 #endif
 
+#if YOOASSET_PURRNET_SUPPORT
+        private static void AddYooAssetNetworkPrefabWatchers()
+        {
+            string[] guids = AssetDatabase.FindAssets("t:YooAssetNetworkPrefabs");
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string assetPath = AssetDatabase.GUIDToAssetPath(guids[i]);
+                var yooAsset = AssetDatabase.LoadAssetAtPath<YooAssetNetworkPrefabs>(assetPath);
+                if (!yooAsset || !yooAsset.autoGenerate)
+                    continue;
+
+                // YooAsset collectors are configured per package rather than per folder,
+                // so any prefab change under Assets/ can affect the generated entries.
+                _watchers.Add(new AssetWatcher(assetPath, "Assets/", ".prefab",
+                    () => YooAssetNetworkPrefabsEditor.Generate(yooAsset)));
+            }
+        }
+#endif
+
         private static string GetFolderPath(UnityEngine.Object folder)
         {
             string folderPath = AssetDatabase.GetAssetPath(folder);
@@ -173,6 +195,9 @@ namespace PurrNet
                    type == typeof(NetworkAssets)
 #if ADDRESSABLES_PURRNET_SUPPORT
                    || type == typeof(AddressableNetworkPrefabs)
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+                   || type == typeof(YooAssetNetworkPrefabs)
 #endif
                    ;
         }

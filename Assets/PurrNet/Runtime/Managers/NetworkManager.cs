@@ -66,6 +66,11 @@ namespace PurrNet
         private AddressableNetworkPrefabs _addressableNetworkPrefabs;
 #endif
 
+#if YOOASSET_PURRNET_SUPPORT
+        [SerializeField]
+        private YooAssetNetworkPrefabs _yooAssetNetworkPrefabs;
+#endif
+
         [PurrDocs("systems-and-modules/network-manager/network-assets")] [SerializeField]
         private NetworkAssets _networkAssets;
 
@@ -234,6 +239,13 @@ namespace PurrNet
         /// The Addressable network prefabs configuration, if assigned.
         /// </summary>
         public AddressableNetworkPrefabs addressableNetworkPrefabs => _addressableNetworkPrefabs;
+#endif
+
+#if YOOASSET_PURRNET_SUPPORT
+        /// <summary>
+        /// The YooAsset network prefabs configuration, if assigned.
+        /// </summary>
+        public YooAssetNetworkPrefabs yooAssetNetworkPrefabs => _yooAssetNetworkPrefabs;
 #endif
 
         /// <summary>
@@ -1358,6 +1370,13 @@ namespace PurrNet
                 modules.AddModule(new AddressablesSyncModule(this, playersManager));
             }
 #endif
+#if YOOASSET_PURRNET_SUPPORT
+            if (_yooAssetNetworkPrefabs && _yooAssetNetworkPrefabs.count > 0 &&
+                networkRules && networkRules.YooAssetSyncLoadState)
+            {
+                modules.AddModule(new YooAssetSyncModule(this, playersManager));
+            }
+#endif
 
             RenewSubscriptions(asServer);
         }
@@ -1595,15 +1614,25 @@ namespace PurrNet
                    (flags.HasFlag(StartFlags.ServerBuild) && ApplicationContext.isServerBuild);
         }
 
-#if ADDRESSABLES_PURRNET_SUPPORT
+#if ADDRESSABLES_PURRNET_SUPPORT || YOOASSET_PURRNET_SUPPORT
         /// <summary>
         /// Sets up a composite prefab provider that merges the regular NetworkPrefabs
-        /// and the AddressableNetworkPrefabs into a single unified provider.
-        /// Called after Addressable prefabs have been loaded.
+        /// with the Addressable and/or YooAsset providers into a single unified provider.
+        /// The provider order is fixed (NetworkPrefabs -> Addressable -> YooAsset) because
+        /// it defines the prefabId offsets, which are the cross-peer addressing contract.
+        /// Called after the async providers have been loaded.
         /// </summary>
         private void SetupCompositePrefabProvider()
         {
-            if (!_addressableNetworkPrefabs || _addressableNetworkPrefabs.count == 0)
+            bool hasAddressables = false;
+            bool hasYooAsset = false;
+#if ADDRESSABLES_PURRNET_SUPPORT
+            hasAddressables = _addressableNetworkPrefabs && _addressableNetworkPrefabs.count > 0;
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+            hasYooAsset = _yooAssetNetworkPrefabs && _yooAssetNetworkPrefabs.count > 0;
+#endif
+            if (!hasAddressables && !hasYooAsset)
                 return;
 
             var composite = new CompositePrefabProvider();
@@ -1611,7 +1640,14 @@ namespace PurrNet
             if (_networkPrefabs)
                 composite.AddProvider(_networkPrefabs);
 
-            composite.AddProvider(_addressableNetworkPrefabs);
+#if ADDRESSABLES_PURRNET_SUPPORT
+            if (hasAddressables)
+                composite.AddProvider(_addressableNetworkPrefabs);
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+            if (hasYooAsset)
+                composite.AddProvider(_yooAssetNetworkPrefabs);
+#endif
             SetPrefabProvider(composite);
         }
 
@@ -1619,6 +1655,7 @@ namespace PurrNet
         {
             try
             {
+#if ADDRESSABLES_PURRNET_SUPPORT
                 if (_addressableNetworkPrefabs && _addressableNetworkPrefabs.count > 0)
                 {
                     try
@@ -1627,13 +1664,30 @@ namespace PurrNet
                         {
                             await _addressableNetworkPrefabs.LoadAllAsync();
                         }
-                        SetupCompositePrefabProvider();
                     }
                     catch (Exception e)
                     {
                         PurrLogger.LogError($"Failed to load Addressable network prefabs: {e.Message}\n{e.StackTrace}");
                     }
                 }
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+                if (_yooAssetNetworkPrefabs && _yooAssetNetworkPrefabs.count > 0)
+                {
+                    try
+                    {
+                        if (_yooAssetNetworkPrefabs.preloadAtStartup)
+                        {
+                            await _yooAssetNetworkPrefabs.LoadAllAsync();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        PurrLogger.LogError($"Failed to load YooAsset network prefabs: {e.Message}\n{e.StackTrace}");
+                    }
+                }
+#endif
+                SetupCompositePrefabProvider();
 
                 AutoStart();
             }
@@ -1906,6 +1960,10 @@ namespace PurrNet
 #if ADDRESSABLES_PURRNET_SUPPORT
             if (_addressableNetworkPrefabs)
                 _addressableNetworkPrefabs.ReleaseAll();
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+            if (_yooAssetNetworkPrefabs)
+                _yooAssetNetworkPrefabs.ReleaseAll();
 #endif
 
             TeardownTransportLayer();

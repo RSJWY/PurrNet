@@ -276,5 +276,27 @@ namespace PurrNet
             return false;
         }
 #endif
+
+#if YOOASSET_PURRNET_SUPPORT
+        public bool TryGetYooAssetKey(int prefabId, out string key)
+        {
+            for (int i = 0; i < _providers.Count; i++)
+            {
+                int count = _counts[i];
+                if (prefabId < _offsets[i] || prefabId >= _offsets[i] + count)
+                    continue;
+
+                int localId = prefabId - _offsets[i];
+                if (_providers[i] is YooAssetNetworkPrefabs yooAsset)
+                    return yooAsset.TryGetKey(localId, out key);
+
+                key = null;
+                return false;
+            }
+
+            key = null;
+            return false;
+        }
+#endif
     }
 }

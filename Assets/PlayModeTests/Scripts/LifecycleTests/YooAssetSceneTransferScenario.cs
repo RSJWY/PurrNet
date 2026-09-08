@@ -103,6 +103,19 @@ public class YooAssetSceneTransferScenario : Scenario
                 existing.InitializeStatus == EOperationStatus.Succeeded)
                 return ScenarioResult.Ok();
 
+            if (existing != null && existing.InitializeStatus == EOperationStatus.Processing)
+            {
+                // Another initializer (e.g. YooAssetTestBootstrap in the scene) already owns
+                // the package initialization; wait for it instead of initializing again.
+                await UniTaskUtils.WaitWithTimeout(
+                    () => existing.InitializeStatus != EOperationStatus.Processing,
+                    _packageTimeoutSeconds, ctx.cancellationToken);
+
+                return existing.InitializeStatus == EOperationStatus.Succeeded
+                    ? ScenarioResult.Ok()
+                    : ScenarioResult.Fail($"yooasset package '{PackageName}' init did not succeed (status: {existing.InitializeStatus}).");
+            }
+
             var buildResult = EditorSimulateBuildInvoker.Build(PackageName, (int)EBundleType.VirtualAssetBundle);
             var package = existing != null ? existing : YooAssets.CreatePackage(PackageName);
             var init = package.InitializePackageAsync(new EditorSimulateModeOptions

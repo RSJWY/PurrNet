@@ -300,10 +300,14 @@ namespace PurrNet.Modules
         private bool ShouldAddObserver(PlayerID player, NetworkIdentity identity)
         {
 #if ADDRESSABLES_PURRNET_SUPPORT
-            return ShouldAddObserverAddressables(player, identity);
-#else
-            return true;
+            if (!ShouldAddObserverAddressables(player, identity))
+                return false;
 #endif
+#if YOOASSET_PURRNET_SUPPORT
+            if (!ShouldAddObserverYooAsset(player, identity))
+                return false;
+#endif
+            return true;
         }
 
 #if ADDRESSABLES_PURRNET_SUPPORT
@@ -328,6 +332,32 @@ namespace PurrNet.Modules
                 return true;
 
             sync.RequestPlayerToLoad(player, guid);
+            return false;
+        }
+#endif
+
+#if YOOASSET_PURRNET_SUPPORT
+        private bool ShouldAddObserverYooAsset(PlayerID player, NetworkIdentity identity)
+        {
+            if (!_manager.networkRules)
+                return true;
+
+            if (!_manager.networkRules.YooAssetWaitForLoadBeforeObserver)
+                return true;
+
+            if (!(_manager.prefabProvider is CompositePrefabProvider composite))
+                return true;
+
+            if (!composite.TryGetYooAssetKey(identity.prefabId, out var key))
+                return true;
+
+            if (!_manager.TryGetModule<YooAssetSyncModule>(true, out var sync))
+                return true;
+
+            if (sync.ClientHasLoaded(player, key))
+                return true;
+
+            sync.RequestPlayerToLoad(player, key);
             return false;
         }
 #endif

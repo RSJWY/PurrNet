@@ -17,6 +17,7 @@ namespace PurrNet.Editor
         private SerializedProperty _dontDestroyOnLoad;
         private SerializedProperty _networkPrefabs;
         private SerializedProperty _addressableNetworkPrefabs;
+        private SerializedProperty _yooAssetNetworkPrefabs;
         private SerializedProperty _networkAssets;
         private SerializedProperty _networkRules;
         private SerializedProperty _authenticator;
@@ -48,6 +49,7 @@ namespace PurrNet.Editor
             _dontDestroyOnLoad = serializedObject.FindProperty("_dontDestroyOnLoad");
             _networkPrefabs = serializedObject.FindProperty("_networkPrefabs");
             _addressableNetworkPrefabs = serializedObject.FindProperty("_addressableNetworkPrefabs");
+            _yooAssetNetworkPrefabs = serializedObject.FindProperty("_yooAssetNetworkPrefabs");
             _networkAssets = serializedObject.FindProperty("_networkAssets");
             _networkRules = serializedObject.FindProperty("_networkRules");
             _transport = serializedObject.FindProperty("_transport");
@@ -196,6 +198,8 @@ namespace PurrNet.Editor
             DrawNetworkPrefabs();
             if(_addressableNetworkPrefabs != null)
                 DrawAddressableNetworkPrefabs();
+            if(_yooAssetNetworkPrefabs != null)
+                DrawYooAssetNetworkPrefabs();
             DrawNetworkAssets();
             EditorGUILayout.PropertyField(_networkRules);
             EditorGUILayout.PropertyField(_visibilityRules);
@@ -278,6 +282,30 @@ namespace PurrNet.Editor
         private void DrawAddressableNetworkPrefabs()
         {
             EditorGUILayout.PropertyField(_addressableNetworkPrefabs);
+        }
+#endif
+
+#if YOOASSET_PURRNET_SUPPORT
+        private void DrawYooAssetNetworkPrefabs()
+        {
+            EditorGUILayout.BeginHorizontal();
+            Color originalBgColor = GUI.backgroundColor;
+
+            EditorGUILayout.PropertyField(_yooAssetNetworkPrefabs);
+            GUI.backgroundColor = originalBgColor;
+
+            if (_yooAssetNetworkPrefabs.objectReferenceValue == null)
+            {
+                if (GUILayout.Button("New", GUILayout.Width(50)))
+                    CreateNewYooAssetNetworkPrefabs();
+            }
+
+            EditorGUILayout.EndHorizontal();
+        }
+#else
+        private void DrawYooAssetNetworkPrefabs()
+        {
+            EditorGUILayout.PropertyField(_yooAssetNetworkPrefabs);
         }
 #endif
 
@@ -535,6 +563,25 @@ namespace PurrNet.Editor
             serializedObject.ApplyModifiedProperties();
 
             EditorGUIUtility.PingObject(addressableNetworkPrefabs);
+        }
+#endif
+
+#if YOOASSET_PURRNET_SUPPORT
+        private void CreateNewYooAssetNetworkPrefabs()
+        {
+            string folderPath = "Assets";
+
+            var yooAssetNetworkPrefabs = ScriptableObject.CreateInstance<YooAssetNetworkPrefabs>();
+            string assetPath = $"{folderPath}/YooAssetNetworkPrefabs.asset";
+            assetPath = AssetDatabase.GenerateUniqueAssetPath(assetPath);
+
+            AssetDatabase.CreateAsset(yooAssetNetworkPrefabs, assetPath);
+            AssetDatabase.SaveAssets();
+
+            _yooAssetNetworkPrefabs.objectReferenceValue = yooAssetNetworkPrefabs;
+            serializedObject.ApplyModifiedProperties();
+
+            EditorGUIUtility.PingObject(yooAssetNetworkPrefabs);
         }
 #endif
     }
