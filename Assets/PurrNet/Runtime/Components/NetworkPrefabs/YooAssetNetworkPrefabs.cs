@@ -35,6 +35,16 @@ namespace PurrNet
         [Tooltip("The YooAsset package whose collector settings are used when auto-generating entries.")]
         public string generationPackageName = "DefaultPackage";
 
+        [Tooltip("Only assets from these collector groups are auto-generated. Empty = all groups in the package.")]
+        public List<string> generationGroupNames = new();
+
+        [Tooltip("Only assets carrying at least one of these YooAsset tags are auto-generated. Empty = no tag filtering.")]
+        public List<string> generationTags = new();
+
+        [Tooltip("Class name of an IYooAssetNetworkPrefabRule implementation used to decide which collected assets become entries. " +
+                 "Empty = default rule (main-collected .prefab assets).")]
+        public string generationRuleName = string.Empty;
+
         /// <summary>
         /// Whether all registered YooAsset prefabs have been loaded and are ready for use.
         /// </summary>

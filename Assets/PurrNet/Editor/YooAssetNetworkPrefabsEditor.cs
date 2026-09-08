@@ -16,6 +16,9 @@ namespace PurrNet
         private SerializedProperty _entriesProp;
         private SerializedProperty _linkedProp;
         private SerializedProperty _generationPackageProp;
+        private SerializedProperty _generationGroupsProp;
+        private SerializedProperty _generationTagsProp;
+        private SerializedProperty _generationRuleProp;
         private ReorderableList _reorderableList;
         private string _searchFilter = "";
 
@@ -46,6 +49,9 @@ namespace PurrNet
             _entriesProp = serializedObject.FindProperty("_entries");
             _linkedProp = serializedObject.FindProperty("linkedYooAssetPrefabs");
             _generationPackageProp = serializedObject.FindProperty("generationPackageName");
+            _generationGroupsProp = serializedObject.FindProperty("generationGroupNames");
+            _generationTagsProp = serializedObject.FindProperty("generationTags");
+            _generationRuleProp = serializedObject.FindProperty("generationRuleName");
 
             if (_target.autoGenerate)
                 Generate(_target);
@@ -293,6 +299,11 @@ namespace PurrNet
             EditorGUILayout.LabelField("Generation Settings", EditorStyles.boldLabel);
             EditorGUI.BeginChangeCheck();
             EditorGUILayout.PropertyField(_generationPackageProp, new GUIContent("Package"));
+            EditorGUILayout.PropertyField(_generationGroupsProp,
+                new GUIContent("Groups", "Only assets from these collector groups are generated. Empty = all groups."), true);
+            EditorGUILayout.PropertyField(_generationTagsProp,
+                new GUIContent("Tags", "Only assets carrying at least one of these tags are generated. Empty = no tag filtering."), true);
+            DrawRulePopup();
             if (EditorGUI.EndChangeCheck())
             {
                 EditorUtility.SetDirty(_target);
@@ -348,7 +359,46 @@ namespace PurrNet
         }
 
         /// <summary>
-        /// Collects the configured YooAsset package and adds every main-collected prefab as an entry.
+        /// Draws a dropdown of all discovered IYooAssetNetworkPrefabRule implementations,
+        /// YooAsset collector-window style. The asset stores the rule's class name.
+        /// </summary>
+        private void DrawRulePopup()
+        {
+            var options = new List<string> { "Default (main-collected prefabs)" };
+            var values = new List<string> { string.Empty };
+
+            foreach (var type in TypeCache.GetTypesDerivedFrom<IYooAssetNetworkPrefabRule>())
+            {
+                if (type.IsAbstract || type == typeof(DefaultYooAssetNetworkPrefabRule))
+                    continue;
+
+                options.Add(type.FullName);
+                values.Add(type.Name);
+            }
+
+            var current = _generationRuleProp.stringValue;
+            int index = values.IndexOf(current);
+            if (index < 0)
+            {
+                options.Add($"{current} (missing)");
+                values.Add(current);
+                index = values.Count - 1;
+            }
+
+            int newIndex = EditorGUILayout.Popup(
+                new GUIContent("Generation Rule",
+                    "IYooAssetNetworkPrefabRule implementation deciding which collected assets become entries."),
+                index, options.ToArray());
+
+            if (newIndex != index)
+                _generationRuleProp.stringValue = values[newIndex];
+        }
+
+        /// <summary>
+        /// Collects the configured YooAsset package and adds matching assets as entries.
+        /// Scope can be narrowed to specific collector groups and/or asset tags, and the
+        /// final per-asset decision is made by the configured IYooAssetNetworkPrefabRule
+        /// (default: main-collected .prefab assets).
         /// Entries covered by linked providers are skipped; duplicates are avoided.
         /// </summary>
         public static void Generate(YooAssetNetworkPrefabs target)
@@ -372,31 +422,81 @@ namespace PurrNet
                     return;
                 }
 
-                var result = setting.BeginCollect(packageName, true, false);
+                var rule = ResolveRule(target.generationRuleName);
+
+                // Mirrors BundleCollectorSetting.BeginCollect's command setup, but collects per
+                // group so the group scope can be filtered and group names reach the rule data.
+                var ignoreRule = BundleCollectorSettingData.GetAssetIgnoreRuleInstance(package.IgnoreRuleName);
+                var command = new CollectCommand(packageName, ignoreRule)
+                {
+                    UniqueBundleName = setting.UniqueBundleName,
+                    UseAssetDependencyDB = false,
+                    EnableAddressable = package.EnableAddressable,
+                    SupportExtensionless = package.SupportExtensionless,
+                    LocationToLower = package.LocationToLower,
+                    IncludeAssetGUID = package.IncludeAssetGUID,
+                    AutoCollectShaders = package.AutoCollectShaders
+                };
+                command.SetSimulateBuild(true);
+
+                var groupNames = target.generationGroupNames;
+                bool filterGroups = groupNames != null && groupNames.Count > 0;
+                var missingGroups = filterGroups ? new HashSet<string>(groupNames) : null;
+
+                var tags = target.generationTags;
+                bool filterTags = tags != null && tags.Count > 0;
+
                 var linkedKeys = CollectLinkedKeys(target);
                 var existingKeys = target.GetExistingKeys();
 
                 bool changed = false;
-                foreach (var asset in result.CollectAssets)
+                foreach (var group in package.Groups)
                 {
-                    if (asset.CollectorType != ECollectorType.MainAssetCollector)
-                        continue;
+                    if (filterGroups)
+                    {
+                        if (!groupNames.Contains(group.GroupName))
+                            continue;
+                        missingGroups.Remove(group.GroupName);
+                    }
 
-                    var path = asset.AssetInfo.AssetPath;
-                    if (string.IsNullOrEmpty(path) ||
-                        !path.EndsWith(".prefab", StringComparison.OrdinalIgnoreCase))
-                        continue;
+                    var assets = group.GetAllCollectAssets(command);
+                    foreach (var asset in assets)
+                    {
+                        if (filterTags && (asset.AssetTags == null || !HasAnyTag(asset.AssetTags, tags)))
+                            continue;
 
-                    var location = package.EnableAddressable ? asset.Address : path;
-                    if (string.IsNullOrEmpty(location))
-                        continue;
+                        var path = asset.AssetInfo.AssetPath;
+                        if (string.IsNullOrEmpty(path))
+                            continue;
 
-                    var key = YooAssetNetworkPrefabs.Encode(packageName, location);
-                    if (linkedKeys.Contains(key) || !existingKeys.Add(key))
-                        continue;
+                        var location = package.EnableAddressable ? asset.Address : path;
+                        if (string.IsNullOrEmpty(location))
+                            continue;
 
-                    target.AddEntry(packageName, location);
-                    changed = true;
+                        var data = new YooAssetNetworkPrefabRuleData(
+                            packageName,
+                            group.GroupName,
+                            asset.Address ?? string.Empty,
+                            path,
+                            asset.AssetTags,
+                            asset.CollectorType == ECollectorType.MainAssetCollector);
+
+                        if (!rule.IsNetworkPrefab(data))
+                            continue;
+
+                        var key = YooAssetNetworkPrefabs.Encode(packageName, location);
+                        if (linkedKeys.Contains(key) || !existingKeys.Add(key))
+                            continue;
+
+                        target.AddEntry(packageName, location);
+                        changed = true;
+                    }
+                }
+
+                if (missingGroups is { Count: > 0 })
+                {
+                    PurrLogger.LogWarning(
+                        $"YooAsset package '{packageName}' has no collector groups named: {string.Join(", ", missingGroups)}.");
                 }
 
                 if (changed)
@@ -416,6 +516,48 @@ namespace PurrNet
             {
                 _generating = false;
             }
+        }
+
+        private static bool HasAnyTag(IReadOnlyList<string> assetTags, List<string> wantedTags)
+        {
+            for (int i = 0; i < assetTags.Count; i++)
+            {
+                if (wantedTags.Contains(assetTags[i]))
+                    return true;
+            }
+            return false;
+        }
+
+        private static readonly DefaultYooAssetNetworkPrefabRule _defaultRule = new();
+        private static readonly Dictionary<string, IYooAssetNetworkPrefabRule> _ruleInstances = new();
+
+        /// <summary>
+        /// Resolves a generation rule by class name, YooAsset style: implementations are
+        /// discovered via TypeCache and instantiated once. Empty name = default rule.
+        /// </summary>
+        private static IYooAssetNetworkPrefabRule ResolveRule(string ruleName)
+        {
+            if (string.IsNullOrEmpty(ruleName))
+                return _defaultRule;
+
+            if (_ruleInstances.TryGetValue(ruleName, out var cached))
+                return cached;
+
+            foreach (var type in TypeCache.GetTypesDerivedFrom<IYooAssetNetworkPrefabRule>())
+            {
+                if (type.IsAbstract)
+                    continue;
+                if (type.Name != ruleName && type.FullName != ruleName)
+                    continue;
+
+                var instance = (IYooAssetNetworkPrefabRule)Activator.CreateInstance(type);
+                _ruleInstances[ruleName] = instance;
+                return instance;
+            }
+
+            PurrLogger.LogWarning(
+                $"IYooAssetNetworkPrefabRule '{ruleName}' was not found; falling back to the default rule.");
+            return _defaultRule;
         }
 
         private static HashSet<string> CollectLinkedKeys(YooAssetNetworkPrefabs target)
