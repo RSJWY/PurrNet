@@ -11,6 +11,7 @@ This fork adds first-class [YooAsset](https://github.com/tuyoogame/yooasset) sup
 - **Editor auto-generation** — entries can be generated straight from a YooAsset package's collector settings, with optional group-name and tag filters plus custom `IYooAssetNetworkPrefabRule` implementations to decide which collected assets become entries.
 - **One-call spawning** — `NetworkManager.SpawnYooAssetAsync(package, location, ...)` loads the prefab through YooAsset and network-spawns it; `DespawnYooAsset` releases it.
 - **IL-intercepted auto-spawn** — `AssetHandle.InstantiateSync/InstantiateAsync` and `Object.Destroy` calls on registered YooAsset prefabs are rewritten to PurrNet proxies, so instances are network-spawned/despawned automatically with no explicit `Spawn` call.
+- **Network-serializable asset references** — `NetworkYooAsset` mirrors `NetworkAddressable`: pass a YooAsset `(packageName, location)` reference through RPCs and SyncVars; only the encoded key travels the wire and the receiver loads the asset from its own YooAsset package automatically.
 - **Examples & tests** — manual test scripts under `Assets/Examples/YooAssetTest` (see its README) and a play-mode scene-transfer scenario under `Assets/PlayModeTests`.
 
 The integration only compiles when the YooAsset package is installed (gated behind the `YOOASSET_PURRNET_SUPPORT` define, auto-set via asmdef version defines).
