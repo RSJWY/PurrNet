@@ -32,6 +32,11 @@
             "name": "com.unity.addressables",
             "expression": "",
             "define": "ADDRESSABLES_PURRNET_SUPPORT"
+        },
+        {
+            "name": "com.tuyoogame.yooasset",
+            "expression": "",
+            "define": "YOOASSET_PURRNET_SUPPORT"
         }
     ],
     "noEngineReferences": false
