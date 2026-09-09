@@ -16,6 +16,7 @@ namespace YooAssetTest
         private readonly List<GameObject> _networkSpawned = new List<GameObject>();
         private readonly List<AssetHandle> _localAssetHandles = new List<AssetHandle>();
         private readonly List<GameObject> _localInstances = new List<GameObject>();
+        private readonly List<AssetHandle> _referenceHandles = new List<AssetHandle>();
 
         [PurrButton, ContextMenu("Load and network spawn prefab")]
         private async void SpawnByLocation()
@@ -154,6 +155,38 @@ namespace YooAssetTest
             Debug.Log($"Received YooAsset reference: package={packageName}, location={location}");
         }
 
+        [PurrButton, ContextMenu("Send YooAsset reference (NetworkYooAsset)")]
+        private async void SendNetworkYooAssetReference()
+        {
+            var package = GetPackage();
+            if (package == null)
+                return;
+
+            var handle = package.LoadAssetAsync<GameObject>(_prefabLocation);
+            await handle;
+            if (handle.Status != EOperationStatus.Succeeded || !handle.AssetObject)
+            {
+                Debug.LogError($"Failed to load YooAsset prefab: {_packageName}/{_prefabLocation}");
+                handle.Release();
+                return;
+            }
+
+            // Keep the sender-side handle alive until OnDestroy; the RPC only carries the encoded key.
+            _referenceHandles.Add(handle);
+            TestSendNetworkYooAssetReference(handle);
+        }
+
+        [ObserversRpc]
+        private void TestSendNetworkYooAssetReference(NetworkYooAsset reference)
+        {
+            Debug.Log($"Received YooAsset reference: {reference}", reference.Asset);
+
+            // The receiver owns the unpacked handle; the Contains guard skips the sender's
+            // own handle when the RPC loops back to the host.
+            if (reference.handle is { IsValid: true } && !_referenceHandles.Contains(reference.handle))
+                _referenceHandles.Add(reference.handle);
+        }
+
         [ObserversRpc]
         private void TestRpc()
         {
@@ -189,6 +222,14 @@ namespace YooAssetTest
             }
 
             _networkAssetHandles.Clear();
+
+            for (var i = 0; i < _referenceHandles.Count; i++)
+            {
+                if (_referenceHandles[i] is { IsValid: true })
+                    _referenceHandles[i].Release();
+            }
+
+            _referenceHandles.Clear();
             base.OnDestroy();
         }
     }
