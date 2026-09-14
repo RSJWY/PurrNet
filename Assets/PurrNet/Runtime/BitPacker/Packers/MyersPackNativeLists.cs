@@ -133,7 +133,7 @@ namespace PurrNet.Packing
             if (a.Length != b.Length) return false;
             for (int i = 0; i < a.Length; i++)
             {
-                if (!PurrEquality<T>.Default.Equals(a[i], b[i]))
+                if (!PurrEquality<T>.Equals(a[i], b[i]))
                     return false;
             }
             return true;

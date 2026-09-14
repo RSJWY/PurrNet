@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace PurrNet.Editor
 {
-    [CustomEditor(typeof(NetworkRigidbody))]
+    [CustomEditor(typeof(NetworkRigidbodyBase), true)]
     [CanEditMultipleObjects]
     public class NetworkRigidbodyInspector : NetworkIdentityInspector
     {
@@ -50,7 +50,7 @@ namespace PurrNet.Editor
 
             foreach (var currentTarget in targets)
             {
-                if (currentTarget is not NetworkRigidbody rigidbody)
+                if (currentTarget is not NetworkRigidbodyBase rigidbody)
                     continue;
 
                 var currentParent = rigidbody.softParentInstance;

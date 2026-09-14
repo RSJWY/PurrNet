@@ -235,6 +235,12 @@ namespace PurrNet.Packing
             return PurrEquality<T>.Default.Equals(a, b);
         }
 
+        [UsedByIL, MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool AreEqualUnmanagedRef<T>(ref T a, ref T b) where T : unmanaged
+        {
+            return PurrEquality<T>.MemEquals(ref a, ref b);
+        }
+
         static readonly Dictionary<Type, MethodInfo> _writeExactMethods = new Dictionary<Type, MethodInfo>();
         static readonly Dictionary<Type, MethodInfo> _writeWrappedMethods = new Dictionary<Type, MethodInfo>();
         static readonly Dictionary<Type, MethodInfo> _readExactMethods = new Dictionary<Type, MethodInfo>();
@@ -282,14 +288,15 @@ namespace PurrNet.Packing
 
         public static bool WriteAsNetworkAsset(BitPacker packer, Object unityObj)
         {
-            var nassets = NetworkManager.main.networkAssets;
-            int index = nassets && unityObj ? nassets.GetIndex(unityObj) : -1;
-            bool isNetworkAsset = index != -1;
+            var manager = NetworkManager.main;
+            var id = NetworkAssetID.invalid;
+            bool isNetworkAsset = manager && manager.networkAssetResolver.TryGetId(
+                unityObj, NetworkAssetResolver.serializationSceneHint, out id, true);
             packer.WriteBit(isNetworkAsset);
 
             if (isNetworkAsset)
             {
-                Packer<PackedInt>.Write(packer, index);
+                Packer<NetworkAssetID>.Write(packer, id);
                 return true;
             }
 
@@ -334,10 +341,11 @@ namespace PurrNet.Packing
         {
             bool isNetworkAsset = Packer<bool>.Read(packer);
 
-            if (isNetworkAsset && NetworkManager.main && NetworkManager.main.networkAssets)
+            var manager = NetworkManager.main;
+            if (isNetworkAsset && manager)
             {
-                int index = Packer<PackedInt>.Read(packer);
-                value = NetworkManager.main.networkAssets.GetAsset(index) is T cast ? cast : default;
+                var id = Packer<NetworkAssetID>.Read(packer);
+                value = manager.networkAssetResolver.TryGetAsset(id, out var asset) && asset is T cast ? cast : default;
                 return true;
             }
 

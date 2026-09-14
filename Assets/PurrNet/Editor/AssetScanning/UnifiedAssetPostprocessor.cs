@@ -83,7 +83,7 @@ namespace PurrNet
                 if (folderPath == null)
                     continue;
 
-                _watchers.Add(new AssetWatcher(assetPath, folderPath, ".prefab", networkPrefabs.Generate));
+                _watchers.Add(new AssetWatcher(guids[i], assetPath, folderPath, ".prefab", RegistryType.NetworkPrefabs));
             }
         }
 
@@ -101,7 +101,7 @@ namespace PurrNet
                 if (folderPath == null)
                     continue;
 
-                _watchers.Add(new AssetWatcher(assetPath, folderPath, null, networkAssets.GenerateAssets));
+                _watchers.Add(new AssetWatcher(guids[i], assetPath, folderPath, null, RegistryType.NetworkAssets));
             }
         }
 
@@ -120,8 +120,8 @@ namespace PurrNet
                 if (folderPath == null)
                     continue;
 
-                _watchers.Add(new AssetWatcher(assetPath, folderPath, ".prefab",
-                    () => AddressableNetworkPrefabsEditor.Generate(addressable)));
+                _watchers.Add(new AssetWatcher(guids[i], assetPath, folderPath, ".prefab",
+                    RegistryType.AddressableNetworkPrefabs));
             }
         }
 #endif
@@ -139,17 +139,24 @@ namespace PurrNet
 
                 // YooAsset collectors are configured per package rather than per folder,
                 // so any prefab change under Assets/ can affect the generated entries.
-                _watchers.Add(new AssetWatcher(assetPath, "Assets/", ".prefab",
-                    () => YooAssetNetworkPrefabsEditor.Generate(yooAsset)));
+                _watchers.Add(new AssetWatcher(guids[i], assetPath, "Assets/", ".prefab",
+                    RegistryType.YooAssetNetworkPrefabs));
             }
         }
 #endif
 
+        /// <summary>
+        /// Folder sources watch everything under them; a scene source watches the scene file itself,
+        /// so saving the scene regenerates from its updated references.
+        /// </summary>
         private static string GetFolderPath(UnityEngine.Object folder)
         {
             string folderPath = AssetDatabase.GetAssetPath(folder);
             if (string.IsNullOrEmpty(folderPath))
                 return null;
+
+            if (folder is SceneAsset)
+                return folderPath;
 
             return folderPath.EndsWith("/", StringComparison.Ordinal) ? folderPath : folderPath + "/";
         }
@@ -227,30 +234,83 @@ namespace PurrNet
             return false;
         }
 
+        private enum RegistryType
+        {
+            NetworkPrefabs,
+            NetworkAssets,
+#if ADDRESSABLES_PURRNET_SUPPORT
+            AddressableNetworkPrefabs,
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+            YooAssetNetworkPrefabs,
+#endif
+        }
+
         private readonly struct AssetWatcher
         {
             public readonly string AssetPath;
+            private readonly string _assetGuid;
             private readonly string _folderPath;
             private readonly string _extension;
-            private readonly Action _generate;
+            private readonly RegistryType _registryType;
 
-            public AssetWatcher(string assetPath, string folderPath, string extension, Action generate)
+            public AssetWatcher(string assetGuid, string assetPath, string folderPath, string extension,
+                RegistryType registryType)
             {
                 AssetPath = assetPath;
+                _assetGuid = assetGuid;
                 _folderPath = folderPath;
                 _extension = extension;
-                _generate = generate;
+                _registryType = registryType;
             }
 
             public void Generate()
             {
-                _generate?.Invoke();
+                if (EditorApplication.isPlayingOrWillChangePlaymode)
+                    return;
+
+                // Cache identifiers rather than instance delegates: a delegate would keep the
+                // registry and its referenced assets alive for the lifetime of this static cache.
+                string assetPath = AssetDatabase.GUIDToAssetPath(_assetGuid);
+                if (string.IsNullOrEmpty(assetPath))
+                    return;
+
+                switch (_registryType)
+                {
+                    case RegistryType.NetworkPrefabs:
+                        var networkPrefabs = AssetDatabase.LoadAssetAtPath<NetworkPrefabs>(assetPath);
+                        if (networkPrefabs && networkPrefabs.autoGenerate && networkPrefabs.folder)
+                            networkPrefabs.Generate();
+                        break;
+                    case RegistryType.NetworkAssets:
+                        var networkAssets = AssetDatabase.LoadAssetAtPath<NetworkAssets>(assetPath);
+                        if (networkAssets && networkAssets.autoGenerate && networkAssets.folder)
+                            networkAssets.GenerateAssets();
+                        break;
+#if ADDRESSABLES_PURRNET_SUPPORT
+                    case RegistryType.AddressableNetworkPrefabs:
+                        var addressable = AssetDatabase.LoadAssetAtPath<AddressableNetworkPrefabs>(assetPath);
+                        if (addressable && addressable.autoGenerate && addressable.folder)
+                            AddressableNetworkPrefabsEditor.Generate(addressable);
+                        break;
+#endif
+#if YOOASSET_PURRNET_SUPPORT
+                    case RegistryType.YooAssetNetworkPrefabs:
+                        var yooAsset = AssetDatabase.LoadAssetAtPath<YooAssetNetworkPrefabs>(assetPath);
+                        if (yooAsset && yooAsset.autoGenerate)
+                            YooAssetNetworkPrefabsEditor.Generate(yooAsset);
+                        break;
+#endif
+                }
             }
 
             public bool Matches(string path)
             {
                 if (!IsProcessablePath(path))
                     return false;
+
+                if (!_folderPath.EndsWith("/", StringComparison.Ordinal))
+                    return string.Equals(path, _folderPath, StringComparison.Ordinal);
 
                 if (!path.StartsWith(_folderPath, StringComparison.Ordinal))
                     return false;
