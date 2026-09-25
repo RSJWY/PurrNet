@@ -192,7 +192,7 @@ namespace PurrNet
         public bool TryGetPersistentId(GameObject prefab, out string persistentId)
         {
             if (TryGetPrefabData(prefab, out var prefabData))
-                return TryGetPersistentId(prefabData.prefabId, out persistentId);
+                return TryGetPersistentId((int)prefabData.prefabId, out persistentId);
 
             persistentId = null;
             return false;
