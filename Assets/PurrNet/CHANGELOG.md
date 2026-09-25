@@ -1,3 +1,131 @@
+# [1.24.0-beta.15](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.14...v1.24.0-beta.15) (2026-09-24)
+
+
+### Bug Fixes
+
+* clear error instead of NRE when sending RPCs from an identity left ([b83be04](https://github.com/PurrNet/PurrNet/commit/b83be04d016c857d24e25f3e95943992a9a9f00e))
+
+# [1.24.0-beta.14](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.13...v1.24.0-beta.14) (2026-09-24)
+
+
+### Bug Fixes
+
+* DontDestroyOnLoad scene invalid on second play session with domain ([21e4058](https://github.com/PurrNet/PurrNet/commit/21e405814ea927adcb3c509c2e7b6c518055980f))
+
+# [1.24.0-beta.13](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.12...v1.24.0-beta.13) (2026-09-24)
+
+
+### Bug Fixes
+
+* Network Rigidbody buffer buildup ([74f322b](https://github.com/PurrNet/PurrNet/commit/74f322baa396fd17f696342d6b4b65aa0eb5aac1))
+
+
+### Features
+
+* PurrTransport project relay for production ([73c8466](https://github.com/PurrNet/PurrNet/commit/73c8466c4df3ca255b2571ae101f4eccf015c78a))
+
+# [1.24.0-beta.13](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.12...v1.24.0-beta.13) (2026-09-24)
+
+
+### Bug Fixes
+
+* Network Rigidbody buffer buildup ([74f322b](https://github.com/PurrNet/PurrNet/commit/74f322baa396fd17f696342d6b4b65aa0eb5aac1))
+
+
+### Features
+
+* PurrTransport project relay for production ([73c8466](https://github.com/PurrNet/PurrNet/commit/73c8466c4df3ca255b2571ae101f4eccf015c78a))
+
+# [1.24.0-beta.13](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.12...v1.24.0-beta.13) (2026-09-24)
+
+
+### Features
+
+* PurrTransport project relay for production ([73c8466](https://github.com/PurrNet/PurrNet/commit/73c8466c4df3ca255b2571ae101f4eccf015c78a))
+
+# [1.24.0-beta.13](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.12...v1.24.0-beta.13) (2026-09-23)
+
+
+### Features
+
+* PurrTransport project relay for production ([73c8466](https://github.com/PurrNet/PurrNet/commit/73c8466c4df3ca255b2571ae101f4eccf015c78a))
+
+# [1.24.0-beta.12](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.11...v1.24.0-beta.12) (2026-09-22)
+
+
+### Bug Fixes
+
+* strip all compiler errors and some more profiler markers ([f30c0df](https://github.com/PurrNet/PurrNet/commit/f30c0df9156d0bdcb2fcfa28d711b543c6e8ed40))
+
+# [1.24.0-beta.11](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.10...v1.24.0-beta.11) (2026-09-21)
+
+
+### Performance Improvements
+
+* async destroy ([5e8a30b](https://github.com/PurrNet/PurrNet/commit/5e8a30bc2fa7474a20b5337ea2a87c8e24895fb4))
+
+# [1.24.0-beta.10](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.9...v1.24.0-beta.10) (2026-09-21)
+
+
+### Bug Fixes
+
+* finalize timeouts promptly and preserve disconnect reas ([3360e60](https://github.com/PurrNet/PurrNet/commit/3360e60b56530a12f2b86f35d72edabe770cbf0b))
+
+# [1.24.0-beta.9](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.8...v1.24.0-beta.9) (2026-09-21)
+
+
+### Bug Fixes
+
+* Enforce receive timeout on WebGL clients ([5c683e3](https://github.com/PurrNet/PurrNet/commit/5c683e390b965176be62f4188b4c79be6babf406))
+* implement missing timeout setting in WebTransport ([0bcc193](https://github.com/PurrNet/PurrNet/commit/0bcc19341a482be1fd4e256b94efa4e1a8b12014))
+
+
+### Features
+
+* heartbeat support for web transport ([5c87442](https://github.com/PurrNet/PurrNet/commit/5c87442e70ff788373f8115152c8682dc0dcb1d8))
+
+# [1.24.0-beta.8](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.7...v1.24.0-beta.8) (2026-09-20)
+
+
+### Bug Fixes
+
+* SteamTransport improvements ([94a020f](https://github.com/PurrNet/PurrNet/commit/94a020ff6c0caf90bedfecbcc65359fd6bffe1a5))
+
+# [1.24.0-beta.7](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.6...v1.24.0-beta.7) (2026-09-18)
+
+
+### Bug Fixes
+
+* Domain reload issue ([5ea6fba](https://github.com/PurrNet/PurrNet/commit/5ea6fbae378a544ad134ea2bdb6ea65a457aa430))
+
+# [1.24.0-beta.6](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.5...v1.24.0-beta.6) (2026-09-17)
+
+
+### Bug Fixes
+
+* despawn and async destroy optimizations ([bba8b17](https://github.com/PurrNet/PurrNet/commit/bba8b179e9452da75440d38e7ae3eb19a7929dfb))
+
+# [1.24.0-beta.5](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.4...v1.24.0-beta.5) (2026-09-17)
+
+
+### Features
+
+* introduce a deffer Destroy (despawn) method for big instances ([6db0b88](https://github.com/PurrNet/PurrNet/commit/6db0b8891d8685f42cf59c96b512b43b87a4cef3))
+
+# [1.24.0-beta.4](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.3...v1.24.0-beta.4) (2026-09-15)
+
+
+### Bug Fixes
+
+* dont rely on auto sync here ([3b23e6e](https://github.com/PurrNet/PurrNet/commit/3b23e6ecebb24708b996e4b1e5f00f1855769501))
+
+# [1.24.0-beta.3](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.2...v1.24.0-beta.3) (2026-09-14)
+
+
+### Bug Fixes
+
+* allow to sync transform from the rollback module ([d32329d](https://github.com/PurrNet/PurrNet/commit/d32329dfec7f562f06e335e31a13d6e375e118d0))
+
 # [1.24.0-beta.2](https://github.com/PurrNet/PurrNet/compare/v1.24.0-beta.1...v1.24.0-beta.2) (2026-09-14)
 
 

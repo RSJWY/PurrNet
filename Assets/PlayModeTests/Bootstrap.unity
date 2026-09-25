@@ -2095,6 +2095,7 @@ GameObject:
   - component: {fileID: 1680343634}
   - component: {fileID: 1680343636}
   - component: {fileID: 1680343635}
+  - component: {fileID: 1680343720}
   - component: {fileID: 1680343637}
   - component: {fileID: 1680343638}
   - component: {fileID: 1680343639}
@@ -2123,6 +2124,7 @@ GameObject:
   - component: {fileID: 1680343669}
   - component: {fileID: 1680343670}
   - component: {fileID: 1680343671}
+  - component: {fileID: 1680343750}
   - component: {fileID: 1680343672}
   - component: {fileID: 1680343673}
   - component: {fileID: 1680343690}
@@ -2351,6 +2353,24 @@ MonoBehaviour:
   _spawnTimeoutSeconds: 15
   _readyTimeoutSeconds: 30
   _despawnTimeoutSeconds: 30
+--- !u!114 &1680343720
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1680343622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61e626bc12c74db99430c7b3831a73d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PurrNet.PlayModeTests::DestroyAsyncScenario
+  _spawnTimeoutSeconds: 15
+  _readyTimeoutSeconds: 30
+  _destroyTimeoutSeconds: 60
+  _groups: 30
+  _leavesPerGroup: 100
+  _childLeaves: 3000
 --- !u!114 &1680343636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3600,6 +3620,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84399ec0ef60464c967b9f08e5a3fd5e, type: 3}
   m_Name:
   m_EditorClassIdentifier: PurrNet.PlayModeTests::NTHandoffOriginShiftScenario
+  _spawnTimeoutSeconds: 15
+  _despawnTimeoutSeconds: 30
+  _barrierTimeoutSeconds: 60
+  _warmupSeconds: 1.2
+  _phaseSeconds: 1.6
+--- !u!114 &1680343750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1680343622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8d7c631337c4434a753e6e1bb6c43c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: PurrNet.PlayModeTests::NRBHandoffClockSkewScenario
   _spawnTimeoutSeconds: 15
   _despawnTimeoutSeconds: 30
   _barrierTimeoutSeconds: 60

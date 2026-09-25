@@ -86,9 +86,10 @@ namespace PurrNet
         /// <summary>True when <see cref="parent"/> is a soft-parent override the receiver should
         /// adopt as its own (vs the real Unity parent). Delta-packs away when unused.</summary>
         public bool isSoftParent;
-        /// <summary>Sender's unscaled clock at capture time. Receivers map it onto their
-        /// own clock so snapshot spacing reflects the send cadence instead of arrival
-        /// timing; relays forward it untouched. 0 means unstamped (legacy sender).</summary>
+        /// <summary>Capture time on the server's unscaled clock. A remote controller stamps its own
+        /// clock and the server restamps it onto its clock before relaying, so every observer
+        /// receives one timebase. Receivers map it onto their own clock so snapshot spacing
+        /// reflects the send cadence instead of arrival timing. 0 means unstamped (legacy sender).</summary>
         public double time;
         /// <summary>Monotonic state order. Controllers assign source order and the server replaces it
         /// with canonical relay order. Zero is reserved for an authority anchor.</summary>
@@ -347,6 +348,10 @@ namespace PurrNet
         private RigidbodySettingsData _lastBroadcastSettings;
         private bool _hasBroadcastSettings;
 
+        internal static double clockSkewForTests;
+
+        private static double clockNow => Time.unscaledTimeAsDouble + clockSkewForTests;
+
         private double _senderTimeOffset;
         private bool _hasSenderTimeOffset;
 
@@ -426,7 +431,7 @@ namespace PurrNet
                 angularVelocity = ReadAngularVelocity(parentTrs),
                 parent = parentIdentity,
                 isSoftParent = isSoft,
-                time = Time.unscaledTimeAsDouble
+                time = clockNow
             };
 
             bool validatedServerAnchor = false;
@@ -522,7 +527,7 @@ namespace PurrNet
                 angularVelocity = _targetAngularVelocity,
                 parent = parentIdentity,
                 isSoftParent = isSoft,
-                time = Time.unscaledTimeAsDouble
+                time = clockNow
             };
         }
 
@@ -542,7 +547,7 @@ namespace PurrNet
                 angularVelocity = ReadAngularVelocity(parentTrs),
                 parent = parentIdentity,
                 isSoftParent = isSoft,
-                time = Time.unscaledTimeAsDouble
+                time = clockNow
             };
         }
 
@@ -587,7 +592,7 @@ namespace PurrNet
                 angularVelocity = angVel,
                 parent = parentIdentity,
                 isSoftParent = isSoft,
-                time = Time.unscaledTimeAsDouble,
+                time = clockNow,
                 sequence = NextStateSequence()
             };
 
@@ -691,7 +696,7 @@ namespace PurrNet
                 angularVelocity = angVel,
                 parent = parentIdentity,
                 isSoftParent = isSoft,
-                time = Time.unscaledTimeAsDouble,
+                time = clockNow,
                 sequence = NextStateSequence()
             };
 
@@ -1214,7 +1219,7 @@ namespace PurrNet
 
             ApplyReceivedSoftParent(data.parent, data.isSoftParent);
 
-            var now = Time.unscaledTimeAsDouble;
+            var now = clockNow;
 
             if (_bufferCount > 0)
             {
@@ -1300,7 +1305,7 @@ namespace PurrNet
                 return;
             }
 
-            double renderTime = Time.unscaledTimeAsDouble - interpolationDelay;
+            double renderTime = clockNow - interpolationDelay;
 
             var oldest = GetSnapshot(0);
             var newest = GetSnapshot(_bufferCount - 1);
@@ -2248,7 +2253,7 @@ namespace PurrNet
             {
                 if (_forceSyncOneShot)
                     return true;
-                return Time.unscaledTimeAsDouble < _forceSyncWindowEndTime;
+                return clockNow < _forceSyncWindowEndTime;
             }
         }
 
@@ -2259,7 +2264,7 @@ namespace PurrNet
             {
                 if (_forceSyncOneShot || _forceSyncWindowEndTime <= 0)
                     return 0f;
-                return Mathf.Max(0f, (float)(_forceSyncWindowEndTime - Time.unscaledTimeAsDouble));
+                return Mathf.Max(0f, (float)(_forceSyncWindowEndTime - clockNow));
             }
         }
 
@@ -2306,7 +2311,7 @@ namespace PurrNet
             }
             else
             {
-                double newEnd = Time.unscaledTimeAsDouble + seconds;
+                double newEnd = clockNow + seconds;
                 if (newEnd > _forceSyncWindowEndTime)
                     _forceSyncWindowEndTime = newEnd;
             }
@@ -2443,6 +2448,8 @@ namespace PurrNet
             if (!IsCurrentControllerSender(info))
                 return;
 
+            RestampToServerClock(ref data, info.sender);
+
             if (!TryPrepareStateForServerRelay(ref data))
                 return;
 
@@ -2466,6 +2473,8 @@ namespace PurrNet
 
             if (!IsCurrentControllerSender(info))
                 return;
+
+            RestampToServerClock(ref data, info.sender);
 
             if (!TryPrepareStateForServerRelay(ref data))
                 return;

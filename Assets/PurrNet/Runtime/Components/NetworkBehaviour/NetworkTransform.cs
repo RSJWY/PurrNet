@@ -1467,7 +1467,7 @@ namespace PurrNet
 
         private const int RECV_HISTORY_SIZE = 32;
 
-        private NetworkTransformState[] _recvStates;
+        [System.NonSerialized] private NetworkTransformState[] _recvStates;
         private ushort[] _recvTicks;
         private int _recvCount;
         private int _recvHead;
@@ -2151,7 +2151,7 @@ namespace PurrNet
 
         private const int CAPTURE_HISTORY_SIZE = 32;
 
-        private NetworkTransformState[] _historyStates;
+        [System.NonSerialized] private NetworkTransformState[] _historyStates;
         private ushort[] _historyTicks;
         private bool[] _historyUsed;
 

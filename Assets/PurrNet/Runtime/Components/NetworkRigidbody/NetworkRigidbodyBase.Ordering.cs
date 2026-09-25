@@ -16,6 +16,10 @@ namespace PurrNet
         private bool _serverAuthorityHasConnectedOwner;
         private PlayerID? _serverAuthorityOwner;
 
+        private double _controllerClockOffset;
+        private bool _hasControllerClockOffset;
+        private PlayerID? _controllerClockSender;
+
         private uint _receivedAuthorityEpoch;
         private uint _receivedStateSequence;
         private bool _hasReceivedStateOrder;
@@ -26,6 +30,7 @@ namespace PurrNet
             _receivedAuthorityEpoch = 0;
             _receivedStateSequence = 0;
             _hasReceivedStateOrder = false;
+            ResetControllerClock();
 
             if (!isServer)
                 return;
@@ -54,6 +59,32 @@ namespace PurrNet
             _receivedAuthorityEpoch = 0;
             _receivedStateSequence = 0;
             _hasReceivedStateOrder = false;
+            ResetControllerClock();
+        }
+
+        private void ResetControllerClock()
+        {
+            _controllerClockOffset = 0;
+            _hasControllerClockOffset = false;
+            _controllerClockSender = null;
+        }
+
+        private void RestampToServerClock(ref RigidbodyStateData data, PlayerID sender)
+        {
+            if (data.time <= 0)
+                return;
+
+            if (_controllerClockSender != sender)
+            {
+                _controllerClockSender = sender;
+                _hasControllerClockOffset = false;
+            }
+
+            data.time = NetworkRigidbodyClockMath.ToServerClock(
+                data.time,
+                clockNow,
+                ref _hasControllerClockOffset,
+                ref _controllerClockOffset);
         }
 
         private uint NextStateSequence()
@@ -214,6 +245,29 @@ namespace PurrNet
                 secondaryTarget != primaryTarget &&
                 secondaryTarget != localPlayer)
                 SendHandoffState(secondaryTarget.Value, anchor);
+        }
+    }
+
+    internal static class NetworkRigidbodyClockMath
+    {
+        internal const double LATE_ARRIVAL_THRESHOLD = 0.5;
+        internal const double DRIFT_RATE = 0.02;
+
+        internal static double ToServerClock(double senderTime, double serverNow, ref bool hasOffset, ref double offset)
+        {
+            double sample = serverNow - senderTime;
+
+            if (!hasOffset || sample < offset)
+            {
+                offset = sample;
+                hasOffset = true;
+            }
+            else if (sample - offset <= LATE_ARRIVAL_THRESHOLD)
+            {
+                offset += (sample - offset) * DRIFT_RATE;
+            }
+
+            return senderTime + offset;
         }
     }
 

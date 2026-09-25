@@ -48,7 +48,7 @@ public class NetworkRigidbodySequenceTests
         var networkRigidbody = gameObject.AddComponent<NetworkRigidbody>();
         try
         {
-            var type = typeof(NetworkRigidbody);
+            var type = typeof(NetworkRigidbodyBase);
             type.GetField("_sendStateSequence", BindingFlags.Instance | BindingFlags.NonPublic)!
                 .SetValue(networkRigidbody, 500u);
             type.GetMethod("BeginServerAuthorityEpoch", BindingFlags.Instance | BindingFlags.NonPublic)!
@@ -76,7 +76,7 @@ public class NetworkRigidbodySequenceTests
 
         try
         {
-            var capture = typeof(NetworkRigidbody).GetMethod(
+            var capture = typeof(NetworkRigidbodyBase).GetMethod(
                 "CaptureServerAuthorityAnchor",
                 BindingFlags.Instance | BindingFlags.NonPublic)!;
             var state = (RigidbodyStateData)capture.Invoke(networkRigidbody, null);
@@ -102,7 +102,7 @@ public class NetworkRigidbodySequenceTests
 
         try
         {
-            var type = typeof(NetworkRigidbody);
+            var type = typeof(NetworkRigidbodyBase);
             var stamp = type.GetMethod(
                 "TryStampAndCacheServerAuthorityAnchor",
                 BindingFlags.Instance | BindingFlags.NonPublic)!;

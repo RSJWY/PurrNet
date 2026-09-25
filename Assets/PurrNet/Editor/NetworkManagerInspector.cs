@@ -23,6 +23,7 @@ namespace PurrNet.Editor
         private SerializedProperty _authenticator;
         private SerializedProperty _transport;
         private SerializedProperty _tickRate;
+        private SerializedProperty _maxTicksPerFrame;
         private SerializedProperty _visibilityRules;
         private SerializedProperty _mtuExceededBehaviour;
         private SerializedProperty _patchLingeringProcessBug;
@@ -54,6 +55,7 @@ namespace PurrNet.Editor
             _networkRules = serializedObject.FindProperty("_networkRules");
             _transport = serializedObject.FindProperty("_transport");
             _tickRate = serializedObject.FindProperty("_tickRate");
+            _maxTicksPerFrame = serializedObject.FindProperty("_maxTicksPerFrame");
             _visibilityRules = serializedObject.FindProperty("_visibilityRules");
             _mtuExceededBehaviour = serializedObject.FindProperty("_mtuExceededBehaviour");
             _patchLingeringProcessBug = serializedObject.FindProperty("_patchLingeringProcessBug");
@@ -215,6 +217,7 @@ namespace PurrNet.Editor
 
             GUI.enabled = isDisconnected;
             RenderTickSlider();
+            EditorGUILayout.PropertyField(_maxTicksPerFrame);
             EditorGUILayout.PropertyField(_mtuExceededBehaviour, new GUIContent("MTU Exceeded Behaviour"));
             EditorGUILayout.PropertyField(_stopPlayingOnDisconnect);
             EditorGUILayout.PropertyField(_patchLingeringProcessBug);
