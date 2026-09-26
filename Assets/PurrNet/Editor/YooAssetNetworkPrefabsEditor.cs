@@ -262,7 +262,7 @@ namespace PurrNet
                 if (package == null)
                     return lookup;
 
-                var result = setting.BeginCollect(packageName, true, false);
+                var result = setting.BeginCollect(packageName, true, false, false);
                 foreach (var asset in result.CollectAssets)
                 {
                     if (asset.CollectorType != ECollectorType.MainAssetCollector)
